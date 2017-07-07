@@ -3,11 +3,13 @@ import requests
 from bs4 import BeautifulSoup as BS
 import global_variables as gv
 import summary_feed
+import desktop_notifier as dn
 
 
 def main():
     live_matches_urls = []
     live_matches_titles = []
+
     try:
         page = requests.get(gv.LIVE_MATCHES_URL)
         if page.status_code!=200:
@@ -35,5 +37,6 @@ def main():
 
 if __name__ == '__main__':
     summary_feed.load_from_rss()
+    notifier = dn.desktop_notifier()
     for item in gv.matches:
-        print(item.keys())
+        notifier.Notify("Second", "Message")

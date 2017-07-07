@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import requests
 import CricketMatch as CM
 
+
 def load_from_rss():
     page = requests.get(gv.RSS_FEED_URL)
     root = ET.fromstring(page.content.decode("utf-8"))
