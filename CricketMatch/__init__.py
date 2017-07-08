@@ -34,3 +34,6 @@ class Match:
         self.venue = venue
         self.state = state
         self.scorecard = scorecard
+    def summary(self):
+        return self.title+"-"+self.type_match+"\n"+self.scorecard.batting+"-"+self.scorecard.runs+"/"+self.scorecard.wickets+"\nOvers-"+self.scorecard.overs+"\nCRR:"+self.scorecard.crr
+

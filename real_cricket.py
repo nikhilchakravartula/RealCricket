@@ -1,4 +1,4 @@
-
+from sms_notifier import TwilioNotify
 import requests
 from bs4 import BeautifulSoup as BS
 import global_variables as gv
@@ -18,9 +18,7 @@ def main():
 
         for anchor in soup.find_all('a', {'class': 'cb-mat-mnu-itm cb-ovr-flo'}):
             title = anchor['title']
-            print(title)
             if title.split(" ")[-1:][0].lower() in gv.LIVE_IDENTIFIERS:
-                print("Yes")
                 live_matches_urls.append(anchor['href'])
                 live_matches_titles.append(anchor['title'])
 
@@ -36,7 +34,10 @@ def main():
 
 
 if __name__ == '__main__':
+    tn = TwilioNotify()
+    total_summary=""
     summary_feed.load_from_rss()
-    notifier = dn.desktop_notifier()
-    for item in gv.matches:
-        notifier.Notify("Second", "Message")
+    for key,value in gv.matches.items():
+        print(value.summary())
+        total_summary+="\n"+value.summary()
+    tn.sendMessage("+919502072408",total_summary)
