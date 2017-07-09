@@ -2,3 +2,4 @@ Beautifulsoup4==4.6.0
 requests
 twilio
 pyQt5
+pypiwin32

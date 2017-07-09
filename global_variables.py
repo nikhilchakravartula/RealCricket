@@ -5,3 +5,4 @@ LIVE_IDENTIFIERS = ['live']
 RSS_FEED_URL = 'http://synd.cricbuzz.com/j2me/1.0/livematches.xml'
 matches= {}
 LIST_MAX = 10
+UPDATE_TIME = 30000

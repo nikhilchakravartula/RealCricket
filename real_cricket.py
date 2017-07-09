@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup as BS
 import global_variables as gv
 import summary_feed
 import desktop_notifier as dn
+from threading import *
+import _thread
+
 
 
 def main():
@@ -32,12 +35,5 @@ def main():
     finally:
         print()
 
-
 if __name__ == '__main__':
-    tn = TwilioNotify()
-    total_summary=""
-    summary_feed.load_from_rss()
-    for key,value in gv.matches.items():
-        print(value.summary())
-        total_summary+="\n"+value.summary()
-    tn.sendMessage("+919502072408",total_summary)
+    print()
