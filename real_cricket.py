@@ -5,8 +5,17 @@ import global_variables as gv
 import summary_feed
 import desktop_notifier as dn
 from threading import *
-import _thread
+import time
 
+
+def worker_thread():
+    summary_feed.load_from_rss()
+    message = ""
+    print(type(gv.matches))
+    print(gv.matches)
+    for match_id in gv.matches.keys():
+        message+= gv.matches[match_id].summary()+"\n"
+    dn.balloon_tip("Real Cricket", message)
 
 
 def main():
@@ -36,4 +45,10 @@ def main():
         print()
 
 if __name__ == '__main__':
-    print()
+    time_interval = 60
+    summary = ""
+    while 1:
+        thread = Thread(target=worker_thread)
+        thread.start()
+        thread.join()
+        time.sleep(time_interval)
