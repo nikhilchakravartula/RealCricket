@@ -5,6 +5,7 @@ import CricketMatch as CM
 
 
 def load_from_rss():
+    gv.matches.clear()
     page = requests.get(gv.RSS_FEED_URL)
     root = ET.fromstring(page.content.decode("utf-8"))
     for match in root.findall('./match'):
@@ -43,8 +44,7 @@ def load_from_rss():
                 bowling = bowling_team.attrib.get('sName')
             scorecard = CM.ScoreCard(batting, bowling, partnership, runs, overs, wickets, inning, crr)
             match_ob = CM.Match( title, match.attrib.get('id'), match.attrib.get('type'), match_num, venue, state, scorecard)
-            print(match_ob.identifier)
-            gv.matches.append({match_ob.identifier: match_ob})
+            gv.matches[match_ob.identifier] = match_ob
 
 
 

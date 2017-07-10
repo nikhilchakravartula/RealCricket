@@ -1,9 +1,21 @@
-
+from sms_notifier import TwilioNotify
 import requests
 from bs4 import BeautifulSoup as BS
 import global_variables as gv
 import summary_feed
 import desktop_notifier as dn
+from threading import *
+import time
+
+
+def worker_thread():
+    summary_feed.load_from_rss()
+    message = ""
+    print(type(gv.matches))
+    print(gv.matches)
+    for match_id in gv.matches.keys():
+        message+= gv.matches[match_id].summary()+"\n"
+    dn.balloon_tip("Real Cricket", message)
 
 
 def main():
@@ -18,9 +30,7 @@ def main():
 
         for anchor in soup.find_all('a', {'class': 'cb-mat-mnu-itm cb-ovr-flo'}):
             title = anchor['title']
-            print(title)
             if title.split(" ")[-1:][0].lower() in gv.LIVE_IDENTIFIERS:
-                print("Yes")
                 live_matches_urls.append(anchor['href'])
                 live_matches_titles.append(anchor['title'])
 
@@ -34,9 +44,12 @@ def main():
     finally:
         print()
 
-
 if __name__ == '__main__':
-    summary_feed.load_from_rss()
-    notifier = dn.desktop_notifier()
-    for item in gv.matches:
-        notifier.Notify("Second", "Message")
+    time_interval = 60
+    summary = ""
+    while 1:
+        thread = Thread(target=worker_thread)
+        thread.start()
+        thread.join()
+        time.sleep(time_interval)
+
