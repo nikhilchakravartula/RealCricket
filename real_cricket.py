@@ -6,49 +6,45 @@ import summary_feed
 import desktop_notifier as dn
 from threading import *
 import time
+import re
+from enum import Enum
 
+class TYPE_OF_FEED(Enum):
+    SUMMARY = 0
+    BALL = 1
 
-def worker_thread():
-    summary_feed.load_from_rss()
+class over_summary:
+    def __init__(self,desc,over,color):
+        self.desc=desc
+        self.over=over
+        self.color=color
+
+def worker_thread(flag):
     message = ""
-    print(type(gv.matches))
-    print(gv.matches)
-    for match_id in gv.matches.keys():
-        message+= gv.matches[match_id].summary()+"\n"
+    if flag == TYPE_OF_FEED.SUMMARY:
+        summary_feed.load_from_rss()
+        print(type(gv.matches))
+        print(gv.matches)
+        for match_id in gv.matches.keys():
+            message+= gv.matches[match_id].summary()+"\n"
+    elif flag == TYPE_OF_FEED.BALL:
+        print("Started scrape")
+        summary_feed.scrape()
+        print("After scrape", gv.current_stats_str)
+
+        message = gv.current_stats_str
     dn.balloon_tip("Real Cricket", message)
 
 
 def main():
-    live_matches_urls = []
-    live_matches_titles = []
-
-    try:
-        page = requests.get(gv.LIVE_MATCHES_URL)
-        if page.status_code!=200:
-            raise ValueError("Could not connect to the webpage")
-        soup = BS(page.content, 'html.parser')
-
-        for anchor in soup.find_all('a', {'class': 'cb-mat-mnu-itm cb-ovr-flo'}):
-            title = anchor['title']
-            if title.split(" ")[-1:][0].lower() in gv.LIVE_IDENTIFIERS:
-                live_matches_urls.append(anchor['href'])
-                live_matches_titles.append(anchor['title'])
-
-        for current_match in live_matches_urls:
-            page = requests.get(gv.ROOT_URL+current_match)
-            soup = BS(page.content, 'html.parser')
-            print(soup.prettify())
-    except ValueError as value_error:
-        print(value_error.args)
-
-    finally:
-        print()
+    print()
 
 if __name__ == '__main__':
-    time_interval = 60
+    time_interval = 20
     summary = ""
+
     while 1:
-        thread = Thread(target=worker_thread)
+        thread = Thread(target=worker_thread,args=(TYPE_OF_FEED.BALL,))
         thread.start()
         thread.join()
         time.sleep(time_interval)

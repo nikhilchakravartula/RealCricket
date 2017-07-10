@@ -49,3 +49,50 @@ def load_from_rss():
 
 
 
+
+def scrape():
+    print("In scrape")
+    live_matches_urls = []
+    live_matches_titles = []
+    gv.current_stats_str=""
+    try:
+        page = requests.get(gv.LIVE_MATCHES_URL)
+        if page.status_code!=200:
+            raise ValueError("Could not connect to the webpage")
+        soup = BS(page.content, 'html.parser')
+        print("first for")
+        print(soup.prettify())
+        for anchor in soup.find_all('a', {'class': 'cb-mat-mnu-itm cb-ovr-flo'}):
+            title = anchor['title']
+            if title.split(" ")[-1:][0].lower() in gv.LIVE_IDENTIFIERS:
+                print("title is ",title)
+                live_matches_urls.append(anchor['href'])
+                live_matches_titles.append(anchor['title'])
+
+        for current_match in live_matches_urls:
+            page = requests.get(gv.ROOT_URL+current_match)
+            soup = BS(page.content, 'html.parser')
+            print("first for")
+            """
+            for anchor in soup.find_all('a',{ 'href':re.compile("cricket-match-highlights/*")}):
+                print("anchor ",anchor['href'])
+                print(gv.ROOT_URL + anchor['href'])
+                highlights_page = requests.get(gv.ROOT_URL + anchor['href'])
+                highlights_soup = BS(highlights_page.content,'html.parser')
+
+                print("THIS IS HIGHLIGHTS SOUP\n",highlights_soup.prettify())
+            """
+
+            #for fours_soup in soup.find_all('div',{'class':"cb-mat-mnu-wrp cb-ovr-num"}):
+            #        print("Parents are ",fours_soup.parent.text)
+            for fours_soup in soup.find_all('p',{'class':"cb-com-ln cb-col cb-col-90"}):
+                    gv.current_stats_str+="\n"+fours_soup.parent.text.strip().split()[0]+fours_soup.parent.text
+                    obj = over_summary(fours_soup.parent.text.strip().split()[0],fours_soup.parent.text,"")
+                    gv.current_stats.append(obj)
+                    print("text ",fours_soup.parent.text.strip().split(" ")[0])
+            print("printing soup contents",soup.prettify())
+    except ValueError as value_error:
+        print(value_error.args)
+
+    finally:
+        print()
