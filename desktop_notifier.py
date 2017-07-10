@@ -5,6 +5,7 @@ import sys, os
 import struct
 import time
 
+
 class WindowsBalloonTip:
     def __init__(self, title, msg):
         message_map = {
@@ -36,12 +37,15 @@ class WindowsBalloonTip:
                          (self.hwnd, 0, NIF_INFO, win32con.WM_USER+20,\
                           hicon, "Balloon  tooltip",title,200,msg))
         # self.show_balloon(title, msg)
-        time.sleep(10)
+        time.sleep(20)
         DestroyWindow(self.hwnd)
         UnregisterClass(classAtom,hinst)
+
     def OnDestroy(self, hwnd, msg, wparam, lparam):
         nid = (self.hwnd, 0)
         Shell_NotifyIcon(NIM_DELETE, nid)
         PostQuitMessage(0) # Terminate the app.
+
+
 def balloon_tip(title, msg):
     w=WindowsBalloonTip(msg, title)

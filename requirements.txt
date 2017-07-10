@@ -3,3 +3,4 @@ requests
 twilio
 pyQt5
 pypiwin32
+win32gui
